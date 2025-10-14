@@ -1,52 +1,57 @@
+import java.util.Random;
+import java.util.Scanner;
 
-package Chapter1_challenge_1_2;
-
-
-   // public static void main(String[] args) {
-        // TODO code application logic here
-        
-        
-        public class Chapter1_challenge_1_2 {
+public class DungeonGame {
     public static void main(String[] args) {
-        // Step 1: Initialize the array with winning numbers
-        String[] winningNumbers = {"12-34-56-78-90", "33-44-11-66-22", "01-02-03-04-05"};
-        
-        // Variables to track the highest average and corresponding winning number
-        String winningNumber = "";
-        double highestAverage = 0.0;
+        int health = 100;
+        Random rand = new Random();
+        Scanner scanner = new Scanner(System.in);
 
-        // Step 2: Analyze each winning number
-        for (String number : winningNumbers) {
-            // Remove dashes
-            String continuousString = number.replace("-", "");
-            
-            // Create an array of integers from the string
-            int[] digits = new int[continuousString.length()];
-            for (int i = 0; i < continuousString.length(); i++) {
-                digits[i] = Character.getNumericValue(continuousString.charAt(i));
+        for (int room = 1; room <= 5; room++) {
+            System.out.println("Entering room " + room + "...");
+            int event = rand.nextInt(3) + 1;
+
+            switch (event) {
+                case 1: // Trap
+                    health -= 20;
+                    System.out.println("A trap sprung! Health is now " + health + ".");
+                    break;
+
+                case 2: // Healing potion
+                    health += 15;
+                    if (health > 100) {
+                        System.out.println("You found a healing potion! Health is now " + health + " -> capped to 100.");
+                        health = 100;
+                    } else {
+                        System.out.println("You found a healing potion! Health is now " + health + ".");
+                    }
+                    break;
+
+                case 3: // Monster
+                    System.out.println("A monster appears!");
+                    int monsterNumber = rand.nextInt(5) + 1;
+                    int guess;
+                    do {
+                        System.out.print("Guess a number (1-5) to defeat it: ");
+                        guess = scanner.nextInt();
+                        if (guess != monsterNumber) {
+                            System.out.println("Wrong! Try again.");
+                        }
+                    } while (guess != monsterNumber);
+                    System.out.println("You defeated the monster!");
+                    break;
             }
 
-            // Calculate the sum and average of the digits
-            int sum = 0;
-            for (int digit : digits) {
-                sum += digit;
-            }
-            double average = (double) sum / digits.length;
-
-            // Print analysis for each ticket
-            System.out.printf("Analyzing: %s%n", number);
-            System.out.printf("Digit Sum: %d, Digit Average: %.1f%n", sum, average);
-
-            // Step 3: Check for the highest average
-            if (average > highestAverage) {
-                highestAverage = average;
-                winningNumber = number;
+            if (health <= 0) {
+                System.out.println("You have been defeated in room " + room + ".");
+                break;
             }
         }
 
-        // Step 4: Announce the winning number with the highest average
-        System.out.printf("The winning number with the highest average is: %s with an average of %.1f%n", winningNumber, highestAverage);
+        if (health > 0) {
+            System.out.println("You cleared the dungeon! Victorious with " + health + " health!");
+        }
+
+        scanner.close();
     }
 }
-
-
